@@ -1,0 +1,161 @@
+const frutas = [
+    { id: 1, nombre: "Arandano", precio: 5000, img: "img/arandano.jpg" },
+    { id: 2, nombre: "Banana", precio: 1000, img: "img/banana.jpg" },
+    { id: 3, nombre: "Frambuesa", precio: 4000, img: "img/frambuesa.jpg" },
+    { id: 4, nombre: "Frutilla", precio: 3000, img: "img/frutilla.jpg" },
+    { id: 5, nombre: "Kiwi", precio: 2000, img: "img/kiwi.jpg" },
+    { id: 6, nombre: "Mandarina", precio: 800, img: "img/mandarina.jpg" },
+    { id: 7, nombre: "Manzana", precio: 1500, img: "img/manzana.jpg" },
+    { id: 8, nombre: "Naranja", precio: 9000, img: "img/naranja.jpg" },
+    { id: 9, nombre: "Pera", precio: 2500, img: "img/pera.jpg" },
+    { id: 10, nombre: "Anana", precio: 3000, img: "img/anana.jpg" },
+    { id: 11, nombre: "Pomelo Amarillo", precio: 2000, img: "img/pomelo-amarillo.jpg" },
+    { id: 12, nombre: "Pomelo Rojo", precio: 2000, img: "img/pomelo-rojo.jpg" },
+    { id: 13, nombre: "Sandia", precio: 5000, img: "img/sandia.jpg" }
+];
+
+const alumno=
+{
+    dni:40128995,
+    nombre:"Agustin",
+    apellido:"Lopez",
+}
+
+// Muestra los datos del alumno en el header, traigo con querySelector el div con la clase nombreAlumno usando el . y despues lo piso usando innerHTML y completando con los datos del objeto alumno.
+
+function imprimirDatosAlumno()
+{
+    const divNombre=document.querySelector(".nombreAlumno");
+    divNombre.innerHTML = `
+  <p>${alumno.nombre} ${alumno.apellido}</p>
+`;
+}
+
+// Muestra en pantalla una lista de frutas, traigo con getElementsByClassName el div con la clase contenedor-productos, luego recorro el array frutas y voy concatenando en una variable html un string con la estructura de cada fruta, al final lo muestro en el contenedor usando innerHTML.
+
+function mostrarFrutas(productosAMostrar)
+{
+const contenedor = document.getElementsByClassName('contenedor-productos')[0];
+let html = "";
+
+// Por cada fruta, arma una tarjeta con imagen, nombre, precio y botón para agregar al carrito
+productosAMostrar.forEach(prod => {
+  html += ` 
+      <div class="producto-info">
+        <img src="${prod.img}" alt="${prod.nombre}">
+        <h3>${prod.nombre}</h3>
+        <p>$${prod.precio}</p>
+        <button class="boton-agregar" onclick="agregarCarrito(${prod.id})">Agregar al carrito</button>
+      </div>
+  `;
+});
+
+// Inserta todo el contenido en el contenedor
+contenedor.innerHTML = html;
+}
+
+// Ordena las frutas por nombre, uso la funcion sort() para ordenar el array de frutas, utilizo los ... para crear una copia del array original y evitar modificarlo directamente. Luego, muestro las frutas ordenadas llamando a la funcion mostrarFrutas.
+function ordenarPorNombre() {
+  const frutasOrdenadas = [...frutas].sort((a, b) => {
+    if (a.nombre.toLowerCase() > b.nombre.toLowerCase()) return 1;
+    if (a.nombre.toLowerCase() < b.nombre.toLowerCase()) return -1;
+    return 0;
+  });
+
+  mostrarFrutas(frutasOrdenadas);
+}
+
+// Idem ordenarPorNombre, usa la misma logica solo que en vez de ordenar por nombre, ordena por precio. Utilizo el metodo sort() para ordenar el array de frutas, comparando los precios de cada fruta. Luego, muestro las frutas ordenadas llamando a la funcion mostrarFrutas.
+function ordenarPorPrecio() {
+  const frutasOrdenadas = [...frutas].sort((a, b) => a.precio - b.precio);
+  mostrarFrutas(frutasOrdenadas);
+}
+
+
+// Detecta cuando se escribe algo en el input y ejecuta el filtro
+const input = document.querySelector('.barra-busqueda');
+input.addEventListener("input", filtrarFrutas);
+
+
+//Capturo el valor del input en texto y filtro el array de frutas usando el metodo filter(), comparando si el nombre de cada fruta incluye el texto ingresado, pasado por un toLowerCase. Finalmente, llamo a la funcion mostrarFrutas y le paso el array filtrado para mostrar las frutas filtradas.
+function filtrarFrutas() {
+  const texto = input.value.toLowerCase();
+
+  const frutasFiltradas = frutas.filter(prod =>
+    prod.nombre.toLowerCase().includes(texto)
+  );
+
+  mostrarFrutas(frutasFiltradas);
+}
+
+
+// Inicializa un carrito vacío, que es un array donde se irán agregando los productos seleccionados, tambien sirve para mostrar el carrito vacio al principio.
+let carrito = [];
+
+//Agrega una fruta al carrito, recibe una id de fruta para agregar, busca esa id usando el metodo find() en el array de frutas, si la encuentra, le hace un push al carrito agregando el objeto, muestra por consola el producto agregado y llama a la funcion mostrarCarrito para actualizar la vista del carrito. Si no encuentra la fruta, no hace nada.
+function agregarCarrito(id)
+{
+    const fruta = frutas.find(prod => prod.id === id);
+    carrito.push(fruta);
+    console.log(`Producto agregado: ${fruta.nombre}`);
+    mostrarCarrito(carrito);
+}
+
+// Elimina una fruta del carrito, recibe una id de fruta para eliminar, busca la fruta usando findIndex() para saber el indice de la fruta en el array, si la encuentra, usa splice() se le pasa el index y el numero 1 para eliminar un solo elemento desde esa posicion, luego guardo la fruta eliminada en una variable para mostrarla por consola, finalmente llama a la funcion mostrarCarrito para actualizar la vista del carrito.
+function eliminarDelCarrito(id)
+{
+    const index = carrito.findIndex(prod => prod.id === id);
+    if (index > -1) {
+        const frutaEliminada = carrito.splice(index, 1);
+        console.log(`Producto eliminado: ${frutaEliminada[0].nombre}`);
+        mostrarCarrito(carrito);
+    }
+}
+
+
+
+
+function mostrarCarrito(carrito)
+{
+    const contenedorCarrito = document.querySelector('#items-carrito');
+    const contadorCarrito = document.querySelector('#contador-carrito');
+    const totalCarrito = document.querySelector('#precio-total');
+    if (carrito.length === 0) {
+        contenedorCarrito.innerHTML = "<p>No hay frutas en el carrito</p>";
+        contadorCarrito.textContent = "0"; 
+        totalCarrito.textContent = "$0"; 
+        return;
+    }
+    contadorCarrito.textContent = carrito.length; 
+    
+    let html = "";
+    carrito.forEach(prod => {
+        html += `
+            <li id="items-carrito">
+                <p class="nombre-item">${prod.nombre} - $${prod.precio}</p>
+                <button class="boton-eliminar" onclick="eliminarDelCarrito(${prod.id})">Eliminar</button>
+            </li>
+        `;
+    });
+    contenedorCarrito.innerHTML = html;
+    const total = carrito.reduce((acc, prod) => acc + prod.precio, 0);
+    totalCarrito.textContent = `$${total}`; 
+}
+
+function vaciarCarrito() {
+  carrito = [];
+  mostrarCarrito(carrito);
+}
+
+function guardarCarrito() {
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+}
+
+function init()
+{
+    imprimirDatosAlumno();
+    mostrarFrutas(frutas); // Muestra todas las frutas por defecto
+    mostrarCarrito(carrito); // Muestra el carrito vacío al inicio
+}
+
+init();

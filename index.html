@@ -32,6 +32,10 @@
     <main>
     <section class="seccion-productos">
         <h2>Nuestras frutas</h2>
+          <div class="botones-orden">
+            <button id="ordenar-nombre" onclick="ordenarPorNombre()">Ordenar por nombre</button>
+            <button id="ordenar-precio" onclick="ordenarPorPrecio()">Ordenar por precio</button>
+          </div>
         <div class="contenedor-productos"></div>
     </section>
 
@@ -39,7 +43,7 @@
     <!-- Seccion carrito -->
     <section class="seccion-carrito">
         <h2>Carrito</h2>
-        
+        <button id="vaciar-carrito" class="boton-vaciar" onclick="vaciarCarrito()">Vaciar Carrito</button>
         <div id="items-carrito">
             <p>No hay elementos en el carrito.</p>
         </div>

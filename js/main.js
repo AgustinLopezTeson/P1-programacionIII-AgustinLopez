@@ -101,7 +101,7 @@ function agregarCarrito(id)
     mostrarCarrito(carrito);
 }
 
-// Elimina una fruta del carrito, recibe una id de fruta para eliminar, busca la fruta usando findIndex() para saber el indice de la fruta en el array, si la encuentra, usa splice() se le pasa el index y el numero 1 para eliminar un solo elemento desde esa posicion, luego guardo la fruta eliminada en una variable para mostrarla por consola, finalmente llama a la funcion mostrarCarrito para actualizar la vista del carrito.
+// Elimina una fruta del carrito, recibe una id de fruta para eliminar, busca la fruta usando findIndex() para saber el indice de la fruta en el array, si la encuentra, usa splice() se le pasa el index y el numero 1 para eliminar un solo elemento desde esa posicion, luego guardo la fruta eliminada en una variable para mostrarla por consola, finalmente llama a la funcion mostrarCarrito para actualizar la vista del carrito, guarda el carrito en localStorage para persistir los cambios.
 function eliminarDelCarrito(id)
 {
     const index = carrito.findIndex(prod => prod.id === id);
@@ -110,11 +110,12 @@ function eliminarDelCarrito(id)
         console.log(`Producto eliminado: ${frutaEliminada[0].nombre}`);
         mostrarCarrito(carrito);
     }
+    guardarCarrito();
 }
 
 
 
-
+//Capturo por id los items del carrito, el contador del carrito y el precio total del carrito, si el carrito esta vacio, muestro un mensaje de que no hay frutas agregadas, de lo contrario, muestro lo que se haya agregado, recorro el array del carrito y por cada fruta sumo 1 al contador, concateno en una variable html auxiliar, muestro todo el carrito en el contenedor usando innerHTML, luego calculo el total del carrito usando reduce() y lo muestro en el elemento totalCarrito
 function mostrarCarrito(carrito)
 {
     const contenedorCarrito = document.querySelector('#items-carrito');
@@ -126,9 +127,11 @@ function mostrarCarrito(carrito)
         totalCarrito.textContent = "$0"; 
         return;
     }
+    // Si hay frutas, actualiza el contador y el total
     contadorCarrito.textContent = carrito.length; 
     
     let html = "";
+    // Recorro el carrito y voy concatenando en html la estructura de cada fruta, con su nombre, precio y un boton para eliminarla del carrito.
     carrito.forEach(prod => {
         html += `
             <li id="items-carrito">
@@ -138,21 +141,39 @@ function mostrarCarrito(carrito)
         `;
     });
     contenedorCarrito.innerHTML = html;
+    // Utilizo el metodo reduce() para sumar los precios de cada fruta en el carrito, acc es el acumulador que empieza en 0 y prod es cada fruta del carrito, al final muestro el total en el elemento totalCarrito.
     const total = carrito.reduce((acc, prod) => acc + prod.precio, 0);
     totalCarrito.textContent = `$${total}`; 
+    // Guardamos el carrito en localStorage para persistir los cambios
+    guardarCarrito(); 
 }
 
+// Vacía el carrito, simplemente asigna un array vacío al carrito y llama a la funcion mostrarCarrito para actualizar la vista del carrito.
 function vaciarCarrito() {
   carrito = [];
   mostrarCarrito(carrito);
+  guardarCarrito(); 
 }
-
+// Guarda el carrito en localStorage, convierte el carrito a un string usando JSON.stringify() y lo guarda en localStorage con la clave 'carrito'.
 function guardarCarrito() {
   localStorage.setItem('carrito', JSON.stringify(carrito));
 }
+//Carga desde el localStorage el carrito con la key carrito si existe, utiliza Json.parse() para convertir el string en un array y lo retorna, si no existe en el local storage retorna un array vacio
+function cargarCarrito() {
+  const carritoGuardado = localStorage.getItem('carrito');
+  if (carritoGuardado) {
+    carrito = JSON.parse(carritoGuardado);
+    return carrito;
+  }
+    return [];
+}
+
+//Funcion que inicializa todas las funciones que tiene dentro al comenzar el script, primero revisa si hay un carrito en el localStorage, imprime los datos del alumno, luego muestra todas las frutas y finalmente muestra el carrito vacío.
 
 function init()
 {
+    carrito = cargarCarrito(); // Carga el carrito desde localStorage
+
     imprimirDatosAlumno();
     mostrarFrutas(frutas); // Muestra todas las frutas por defecto
     mostrarCarrito(carrito); // Muestra el carrito vacío al inicio

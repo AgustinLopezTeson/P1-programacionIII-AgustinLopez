@@ -1,3 +1,4 @@
+
 const frutas = [
     { id: 1, nombre: "Arandano", precio: 5000, img: "img/arandano.jpg" },
     { id: 2, nombre: "Banana", precio: 1000, img: "img/banana.jpg" },
@@ -13,7 +14,7 @@ const frutas = [
     { id: 12, nombre: "Pomelo Rojo", precio: 2000, img: "img/pomelo-rojo.jpg" },
     { id: 13, nombre: "Sandia", precio: 5000, img: "img/sandia.jpg" }
 ];
-
+// Objeto alumno con sus datos, contiene el dni, nombre y apellido del alumno.
 const alumno=
 {
     dni:40128995,
@@ -152,7 +153,7 @@ function mostrarCarrito(carrito)
 function vaciarCarrito() {
   carrito = [];
   mostrarCarrito(carrito);
-  guardarCarrito(); 
+  localStorage.clear(); // Limpia el localStorage
 }
 // Guarda el carrito en localStorage, convierte el carrito a un string usando JSON.stringify() y lo guarda en localStorage con la clave 'carrito'.
 function guardarCarrito() {
@@ -178,5 +179,5 @@ function init()
     mostrarFrutas(frutas); // Muestra todas las frutas por defecto
     mostrarCarrito(carrito); // Muestra el carrito vacío al inicio
 }
-
+// Llama a la función init para iniciar la aplicación
 init();
